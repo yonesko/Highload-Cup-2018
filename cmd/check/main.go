@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"strconv"
 	"strings"
 )
@@ -19,9 +20,21 @@ var rows []row
 
 func main() {
 	loadAmmo()
+	client := &http.Client{}
 	for _, r := range rows {
 		if strings.Contains(r.query, "/accounts/filter/") {
-			fmt.Println(r.query)
+			request, err := http.NewRequest(r.method, fmt.Sprintf("http://localhost:80%s", r.query), nil)
+			if err != nil {
+				log.Fatal(err)
+			}
+			resp, err := client.Do(request)
+			if err != nil {
+				log.Fatal(err)
+			}
+			if resp.StatusCode != r.expectedStatus {
+				fmt.Printf("Unexpected status, want = %d, got = %d\n", r.expectedStatus, resp.StatusCode)
+				fmt.Println(r)
+			}
 		}
 	}
 }
