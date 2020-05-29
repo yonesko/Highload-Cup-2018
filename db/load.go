@@ -2,10 +2,15 @@ package db
 
 import (
 	"archive/zip"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
+
+	"go.avito.ru/github.com/yonesko/Highload-Cup-2018/account"
 )
+
+var Accounts []account.Account
 
 func LoadData() {
 	reader, err := zip.OpenReader("/tmp/data/data.zip")
@@ -22,7 +27,17 @@ func LoadData() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		rc.Close()
-		fmt.Println(string(bytes))
+		_ = rc.Close()
+		type Accs struct {
+			Accounts []account.Account `json:"accounts"`
+		}
+		accs := Accs{}
+		err = json.Unmarshal(bytes, &accs)
+		if err != nil {
+			log.Fatal(err)
+		}
+		Accounts = append(Accounts, accs.Accounts...)
 	}
+	fmt.Printf("Load completed, len = %d\n", len(Accounts))
+	//fmt.Printf("%#v", Accounts[0])
 }
