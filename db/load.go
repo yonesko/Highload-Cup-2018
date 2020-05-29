@@ -44,5 +44,15 @@ func LoadAccounts() {
 }
 
 func IntersectSorted(a []int64, b []int64) []int64 {
-	return nil
+	var ans []int64
+
+	for _, id1 := range a {
+		for _, id2 := range b {
+			if id1 == id2 {
+				ans = append(ans, id1)
+			}
+		}
+	}
+
+	return ans
 }

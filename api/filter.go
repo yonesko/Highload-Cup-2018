@@ -98,6 +98,20 @@ func (p predicate) filter() []int64 {
 			}
 			return ans
 		}
+	case "phone":
+		switch p.op {
+		case "null":
+			var ans []int64
+			for _, a := range db.Accounts {
+				if p.val == "1" && a.Phone == "" {
+					ans = append(ans, a.ID)
+				}
+				if p.val == "0" && a.Phone != "" {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
+		}
 	}
 	return nil
 }
