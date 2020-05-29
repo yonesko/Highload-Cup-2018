@@ -88,7 +88,7 @@ func (p predicate) filter() []int64 {
 }
 
 func AccountsFilter(c *gin.Context) {
-	preds, ok := parsePredicate(c)
+	preds, ok := parsePredicates(c)
 	if !ok {
 		c.Status(400)
 		return
@@ -124,7 +124,7 @@ func respBody(accountIds []int64) []gin.H {
 }
 
 //return sorted by selectivity predicates
-func parsePredicate(c *gin.Context) ([]predicate, bool) {
+func parsePredicates(c *gin.Context) ([]predicate, bool) {
 	var ans []predicate
 	for _, p := range c.Params {
 		if p.Key == "query_id" {
