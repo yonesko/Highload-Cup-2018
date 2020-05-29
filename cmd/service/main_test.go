@@ -42,7 +42,7 @@ func Test(t *testing.T) {
 
 func parseBody(s string) body {
 	var b body
-	err := json.Unmarshal(byte(s), &b)
+	err := json.Unmarshal([]byte(s), &b)
 	if err != nil {
 		panic(err)
 	}
