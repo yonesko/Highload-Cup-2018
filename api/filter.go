@@ -1,24 +1,95 @@
 package api
 
 import (
+	"strings"
+
 	"github.com/gin-gonic/gin"
 
 	"go.avito.ru/github.com/yonesko/Highload-Cup-2018/db"
+	"go.avito.ru/github.com/yonesko/Highload-Cup-2018/slice"
 )
+
+type filterField struct {
+	name        string
+	ops         []string
+	selectivity int
+}
+
+var filterFields = []filterField{
+	{
+		name:        "sex",
+		ops:         []string{"eq"},
+		selectivity: 100,
+	},
+	{
+		name:        "email",
+		ops:         []string{"domain", "lt", "gt"},
+		selectivity: 0,
+	},
+	{
+		name:        "status",
+		ops:         []string{"eq", "neq"},
+		selectivity: 0,
+	},
+	{
+		name:        "fname",
+		ops:         []string{"eq", "any", "null"},
+		selectivity: 0,
+	},
+	{
+		name:        "sname",
+		ops:         []string{"eq", "starts", "null"},
+		selectivity: 0,
+	},
+	{
+		name:        "phone",
+		ops:         []string{"code", "null"},
+		selectivity: 0,
+	},
+	{
+		name:        "country",
+		ops:         []string{"eq", "null"},
+		selectivity: 0,
+	},
+	{
+		name:        "city",
+		ops:         []string{"eq", "any", "null"},
+		selectivity: 0,
+	},
+	{
+		name:        "birth",
+		ops:         []string{"lt", "gt", "year"},
+		selectivity: 0,
+	},
+	{
+		name:        "interests",
+		ops:         []string{"contains", "any"},
+		selectivity: 0,
+	},
+	{
+		name:        "likes",
+		ops:         []string{"eq", "contains"},
+		selectivity: 0,
+	},
+	{
+		name:        "premium",
+		ops:         []string{"now", "null"},
+		selectivity: 0,
+	},
+}
 
 type predicate struct {
 	field string
 	op    string
 }
 
-type predicateI interface {
-	//sorted acc ids
-	filter() []int64
+func (p predicate) filter() []int64 {
+	panic("implement me")
 }
 
 func AccountsFilter(c *gin.Context) {
-	preds, err := parsePredicate(c)
-	if err != nil {
+	preds, ok := parsePredicate(c)
+	if !ok {
 		c.Status(400)
 		return
 	}
@@ -53,6 +124,38 @@ func respBody(accountIds []int64) []gin.H {
 }
 
 //return sorted by selectivity predicates
-func parsePredicate(c *gin.Context) ([]predicateI, error) {
-	return nil, nil
+func parsePredicate(c *gin.Context) ([]predicate, bool) {
+	var ans []predicate
+	for _, p := range c.Params {
+		if p.Key == "query_id" {
+			continue
+		}
+		if p, ok := parsePred(p.Key); !ok {
+			return nil, false
+		} else {
+			ans = append(ans, p)
+		}
+	}
+	//SORT by SELECT
+	return ans, true
+}
+
+func parsePred(s string) (predicate, bool) {
+	split := strings.Split(s, "_")
+	if len(split) != 2 {
+		return predicate{}, false
+	}
+	p := predicate{field: split[0], op: split[1]}
+	if !filterFieldsContainsPred(p) {
+		return predicate{}, false
+	}
+	return p, true
+}
+func filterFieldsContainsPred(p predicate) bool {
+	for _, ff := range filterFields {
+		if ff.name == p.field && slice.StringSliceContains(ff.ops, p.op) {
+			return true
+		}
+	}
+	return false
 }
