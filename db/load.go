@@ -28,10 +28,9 @@ func LoadAccounts() {
 			log.Fatal(err)
 		}
 		_ = rc.Close()
-		type Accs struct {
+		accs := struct {
 			Accounts []account.Account `json:"accounts"`
-		}
-		accs := Accs{}
+		}{}
 		err = json.Unmarshal(bytes, &accs)
 		if err != nil {
 			log.Fatal(err)
