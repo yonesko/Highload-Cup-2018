@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 	"strings"
@@ -34,7 +35,7 @@ func init() {
 		{
 			name:        "status",
 			ops:         []string{"eq", "neq"},
-			selectivity: 0,
+			selectivity: 90,
 		},
 		{
 			name:        "fname",
@@ -54,12 +55,12 @@ func init() {
 		{
 			name:        "country",
 			ops:         []string{"eq", "null"},
-			selectivity: 0,
+			selectivity: 80,
 		},
 		{
 			name:        "city",
 			ops:         []string{"eq", "any", "null"},
-			selectivity: 0,
+			selectivity: 70,
 		},
 		{
 			name:        "birth",
@@ -203,8 +204,9 @@ func parsePredicates(c *gin.Context) ([]predicate, bool) {
 		}
 	}
 	sort.Slice(ans, func(i, j int) bool {
-		return filterFieldsMap[ans[i].field].selectivity > filterFieldsMap[ans[i].field].selectivity
+		return filterFieldsMap[ans[i].field].selectivity > filterFieldsMap[ans[j].field].selectivity
 	})
+	fmt.Println(ans)
 	return ans, true
 }
 
