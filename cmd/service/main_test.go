@@ -5,21 +5,14 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
+	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
-type row struct {
-	method             string
-	query              string
-	expectedStatus     int
-	expectedAnswerBody string
-}
-
-var rows []row
-
-func main() {
+func Test(t *testing.T) {
 	loadAmmo()
 	client := &http.Client{}
 	for _, r := range rows {
@@ -32,17 +25,28 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			if resp.StatusCode != r.expectedStatus {
-				fmt.Printf("Unexpected status, want = %d, got = %d\n", r.expectedStatus, resp.StatusCode)
-				fmt.Println(r)
-				bytes, _ := ioutil.ReadAll(resp.Body)
+			bytes, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				log.Fatal(err)
+			}
+			actualRespBody := string(bytes)
+			if resp.StatusCode != r.expectedStatus || actualRespBody != r.expectedAnswerBody {
 				fmt.Println(request.URL)
-				fmt.Println(string(bytes))
-				os.Exit(0)
+				require.Equal(t, r.expectedStatus, resp.StatusCode)
+				require.Equal(t, r.expectedAnswerBody, actualRespBody)
 			}
 		}
 	}
 }
+
+type row struct {
+	method             string
+	query              string
+	expectedStatus     int
+	expectedAnswerBody string
+}
+
+var rows []row
 
 func loadAmmo() {
 	file, err := ioutil.ReadFile("/Users/gbdanichev/Downloads/test_accounts_240119/answers/phase_1_get.answ")

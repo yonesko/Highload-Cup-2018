@@ -86,7 +86,20 @@ type predicate struct {
 }
 
 func (p predicate) filter() []int64 {
-	panic("implement me")
+	switch p.field {
+	case "sex":
+		switch p.op {
+		case "eq":
+			var ans []int64
+			for _, a := range db.Accounts {
+				if a.Sex == p.val {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
+		}
+	}
+	return nil
 }
 
 func AccountsFilter(c *gin.Context) {
