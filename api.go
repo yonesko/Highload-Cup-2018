@@ -5,6 +5,10 @@ import (
 )
 
 func accountsFilter(c *gin.Context) {
+	//for _,p := range c.Params {
+	//
+	//}
+
 	c.JSON(200, gin.H{
 		"message": "pong",
 	})
