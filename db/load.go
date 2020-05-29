@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	"go.avito.ru/github.com/yonesko/Highload-Cup-2018/account"
+	"github.com/yonesko/Highload-Cup-2018/account"
 )
 
 var Accounts = map[int64]account.Account{}

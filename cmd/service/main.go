@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"go.avito.ru/github.com/yonesko/Highload-Cup-2018/api"
-	"go.avito.ru/github.com/yonesko/Highload-Cup-2018/db"
+	"github.com/yonesko/Highload-Cup-2018/api"
+	"github.com/yonesko/Highload-Cup-2018/db"
 )
 
 func main() {

@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"go.avito.ru/github.com/yonesko/Highload-Cup-2018/db"
-	"go.avito.ru/github.com/yonesko/Highload-Cup-2018/slice"
+	"github.com/yonesko/Highload-Cup-2018/db"
+	"github.com/yonesko/Highload-Cup-2018/slice"
 )
 
 type filterField struct {
