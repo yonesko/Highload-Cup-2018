@@ -7,13 +7,9 @@ import (
 	"go.avito.ru/github.com/yonesko/Highload-Cup-2018/db"
 )
 
-func DumbHandler(writer http.ResponseWriter, request *http.Request) {
-	writer.Write([]byte("Hello, I'm Web Server!"))
-}
-
 func main() {
 	db.LoadAccounts()
 
-	http.HandleFunc("/", DumbHandler)
+	http.HandleFunc("/accounts/filter/", accountsFilter)
 	log.Fatal(http.ListenAndServe(":80", nil))
 }
