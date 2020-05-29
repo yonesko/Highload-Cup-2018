@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"sort"
 	"strconv"
 	"strings"
@@ -206,7 +205,6 @@ func parsePredicates(c *gin.Context) ([]predicate, bool) {
 	sort.Slice(ans, func(i, j int) bool {
 		return filterFieldsMap[ans[i].field].selectivity > filterFieldsMap[ans[j].field].selectivity
 	})
-	fmt.Println(ans)
 	return ans, true
 }
 
