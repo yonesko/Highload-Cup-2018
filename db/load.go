@@ -12,7 +12,7 @@ import (
 
 var Accounts []account.Account
 
-func LoadData() {
+func LoadAccounts() {
 	reader, err := zip.OpenReader("/tmp/data/data.zip")
 	if err != nil {
 		log.Fatalf("can't load data: %s", err)

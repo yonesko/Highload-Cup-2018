@@ -12,7 +12,7 @@ func DumbHandler(writer http.ResponseWriter, request *http.Request) {
 }
 
 func main() {
-	db.LoadData()
+	db.LoadAccounts()
 
 	http.HandleFunc("/", DumbHandler)
 	log.Fatal(http.ListenAndServe(":80", nil))
