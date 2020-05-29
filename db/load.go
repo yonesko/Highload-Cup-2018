@@ -10,7 +10,7 @@ import (
 	"go.avito.ru/github.com/yonesko/Highload-Cup-2018/account"
 )
 
-var Accounts []account.Account
+var Accounts = map[int64]account.Account{}
 
 func LoadAccounts() {
 	reader, err := zip.OpenReader("/tmp/data/data.zip")
@@ -35,7 +35,9 @@ func LoadAccounts() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		Accounts = append(Accounts, accs.Accounts...)
+		for _, a := range accs.Accounts {
+			Accounts[a.ID] = a
+		}
 	}
 	fmt.Printf("Load completed, len = %d\n", len(Accounts))
 	//fmt.Printf("%#v", Accounts[0])
