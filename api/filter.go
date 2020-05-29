@@ -17,67 +17,75 @@ type filterField struct {
 	selectivity int
 }
 
-var filterFields = []filterField{
-	{
-		name:        "sex",
-		ops:         []string{"eq"},
-		selectivity: 100,
-	},
-	{
-		name:        "email",
-		ops:         []string{"domain", "lt", "gt"},
-		selectivity: 0,
-	},
-	{
-		name:        "status",
-		ops:         []string{"eq", "neq"},
-		selectivity: 0,
-	},
-	{
-		name:        "fname",
-		ops:         []string{"eq", "any", "null"},
-		selectivity: 0,
-	},
-	{
-		name:        "sname",
-		ops:         []string{"eq", "starts", "null"},
-		selectivity: 0,
-	},
-	{
-		name:        "phone",
-		ops:         []string{"code", "null"},
-		selectivity: 0,
-	},
-	{
-		name:        "country",
-		ops:         []string{"eq", "null"},
-		selectivity: 0,
-	},
-	{
-		name:        "city",
-		ops:         []string{"eq", "any", "null"},
-		selectivity: 0,
-	},
-	{
-		name:        "birth",
-		ops:         []string{"lt", "gt", "year"},
-		selectivity: 0,
-	},
-	{
-		name:        "interests",
-		ops:         []string{"contains", "any"},
-		selectivity: 0,
-	},
-	{
-		name:        "likes",
-		ops:         []string{"eq", "contains"},
-		selectivity: 0,
-	},
-	{
-		name:        "premium",
-		ops:         []string{"now", "null"},
-		selectivity: 0,
-	},
+var filterFieldsMap = map[string]filterField{}
+
+func init() {
+	var filterFields = []filterField{
+		{
+			name:        "sex",
+			ops:         []string{"eq"},
+			selectivity: 100,
+		},
+		{
+			name:        "email",
+			ops:         []string{"domain", "lt", "gt"},
+			selectivity: 0,
+		},
+		{
+			name:        "status",
+			ops:         []string{"eq", "neq"},
+			selectivity: 0,
+		},
+		{
+			name:        "fname",
+			ops:         []string{"eq", "any", "null"},
+			selectivity: 0,
+		},
+		{
+			name:        "sname",
+			ops:         []string{"eq", "starts", "null"},
+			selectivity: 0,
+		},
+		{
+			name:        "phone",
+			ops:         []string{"code", "null"},
+			selectivity: 0,
+		},
+		{
+			name:        "country",
+			ops:         []string{"eq", "null"},
+			selectivity: 0,
+		},
+		{
+			name:        "city",
+			ops:         []string{"eq", "any", "null"},
+			selectivity: 0,
+		},
+		{
+			name:        "birth",
+			ops:         []string{"lt", "gt", "year"},
+			selectivity: 0,
+		},
+		{
+			name:        "interests",
+			ops:         []string{"contains", "any"},
+			selectivity: 0,
+		},
+		{
+			name:        "likes",
+			ops:         []string{"eq", "contains"},
+			selectivity: 0,
+		},
+		{
+			name:        "premium",
+			ops:         []string{"now", "null"},
+			selectivity: 0,
+		},
+	}
+
+	for _, ff := range filterFields {
+		filterFieldsMap[ff.name] = ff
+	}
 }
 
 type predicate struct {
@@ -194,7 +202,9 @@ func parsePredicates(c *gin.Context) ([]predicate, bool) {
 			ans = append(ans, p)
 		}
 	}
-	//SORT by SELECT
+	sort.Slice(ans, func(i, j int) bool {
+		return filterFieldsMap[ans[i].field].selectivity > filterFieldsMap[ans[i].field].selectivity
+	})
 	return ans, true
 }
 
@@ -210,10 +220,8 @@ func parsePred(key string, val string) (predicate, bool) {
 	return p, true
 }
 func validatePred(p predicate) bool {
-	for _, ff := range filterFields {
-		if ff.name == p.field && slice.StringSliceContains(ff.ops, p.op) {
-			return true
-		}
+	if ff, ok := filterFieldsMap[p.field]; ok && slice.StringSliceContains(ff.ops, p.op) {
+		return true
 	}
 	return false
 }
