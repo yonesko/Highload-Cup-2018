@@ -148,14 +148,19 @@ func parseLimit(c *gin.Context) (int, bool) {
 	}
 	return l, true
 }
-
+func min(a, b int) int {
+	if a > b {
+		return b
+	}
+	return a
+}
 func respBody(accountIds []int64, limit int, preds []predicate) []gin.H {
 	ans := make([]gin.H, limit)
 
 	sort.Slice(accountIds, func(i, j int) bool {
 		return accountIds[i] > accountIds[j]
 	})
-	for i := 0; i < limit; i++ {
+	for i := 0; i < min(limit, len(accountIds)); i++ {
 		account := db.Accounts[accountIds[i]]
 		ans[i] = gin.H{"id": account.ID, "email": account.Email}
 		for _, p := range preds {
