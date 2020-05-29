@@ -44,13 +44,14 @@ func parseBody(s string) body {
 	var b body
 	err := json.Unmarshal([]byte(s), &b)
 	if err != nil {
+		fmt.Println(s)
 		panic(err)
 	}
 	return b
 }
 
 type body struct {
-	Accounts map[string]string `json:"accounts"`
+	Accounts []map[string]interface{} `json:"accounts"`
 }
 
 type row struct {
