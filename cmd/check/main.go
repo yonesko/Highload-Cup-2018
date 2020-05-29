@@ -36,6 +36,7 @@ func main() {
 				fmt.Printf("Unexpected status, want = %d, got = %d\n", r.expectedStatus, resp.StatusCode)
 				fmt.Println(r)
 				bytes, _ := ioutil.ReadAll(resp.Body)
+				fmt.Println(request.URL)
 				fmt.Println(string(bytes))
 			}
 		}

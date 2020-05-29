@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -81,6 +82,7 @@ var filterFields = []filterField{
 type predicate struct {
 	field string
 	op    string
+	val   string
 }
 
 func (p predicate) filter() []int64 {
@@ -126,11 +128,11 @@ func respBody(accountIds []int64) []gin.H {
 //return sorted by selectivity predicates
 func parsePredicates(c *gin.Context) ([]predicate, bool) {
 	var ans []predicate
-	for _, p := range c.Params {
-		if p.Key == "query_id" {
+	for k, vals := range c.Request.URL.Query() {
+		if k == "query_id" {
 			continue
 		}
-		if p, ok := parsePred(p.Key); !ok {
+		if p, ok := parsePred(k, vals[0]); !ok {
 			return nil, false
 		} else {
 			ans = append(ans, p)
@@ -140,12 +142,13 @@ func parsePredicates(c *gin.Context) ([]predicate, bool) {
 	return ans, true
 }
 
-func parsePred(s string) (predicate, bool) {
-	split := strings.Split(s, "_")
+func parsePred(key string, val string) (predicate, bool) {
+	split := strings.Split(key, "_")
 	if len(split) != 2 {
 		return predicate{}, false
 	}
-	p := predicate{field: split[0], op: split[1]}
+	p := predicate{field: split[0], op: split[1], val: val}
+	fmt.Println(p)
 	if !validatePred(p) {
 		return predicate{}, false
 	}
