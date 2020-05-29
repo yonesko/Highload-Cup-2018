@@ -146,12 +146,12 @@ func parsePred(s string) (predicate, bool) {
 		return predicate{}, false
 	}
 	p := predicate{field: split[0], op: split[1]}
-	if !filterFieldsContainsPred(p) {
+	if !validatePred(p) {
 		return predicate{}, false
 	}
 	return p, true
 }
-func filterFieldsContainsPred(p predicate) bool {
+func validatePred(p predicate) bool {
 	for _, ff := range filterFields {
 		if ff.name == p.field && slice.StringSliceContains(ff.ops, p.op) {
 			return true
