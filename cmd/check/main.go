@@ -38,9 +38,9 @@ func main() {
 				bytes, _ := ioutil.ReadAll(resp.Body)
 				fmt.Println(request.URL)
 				fmt.Println(string(bytes))
+				os.Exit(0)
 			}
 		}
-		os.Exit(0)
 	}
 }
 

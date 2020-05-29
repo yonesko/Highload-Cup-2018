@@ -1,7 +1,7 @@
 package api
 
 import (
-	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -90,6 +90,11 @@ func (p predicate) filter() []int64 {
 }
 
 func AccountsFilter(c *gin.Context) {
+	limit, ok := parseLimit(c)
+	if !ok {
+		c.Status(400)
+		return
+	}
 	preds, ok := parsePredicates(c)
 	if !ok {
 		c.Status(400)
@@ -105,10 +110,16 @@ func AccountsFilter(c *gin.Context) {
 		}
 		accountIds = db.IntersectSorted(accountIds, result)
 	}
-	c.JSON(200, gin.H{"accounts": respBody(accountIds)})
+	c.JSON(200, gin.H{"accounts": respBody(accountIds, limit)})
 }
-
-func respBody(accountIds []int64) []gin.H {
+func parseLimit(c *gin.Context) (int, bool) {
+	l, err := strconv.Atoi(c.Query("limit"))
+	if err != nil {
+		return 0, false
+	}
+	return l, true
+}
+func respBody(accountIds []int64, limit int) []gin.H {
 	ans := make([]gin.H, len(accountIds))
 
 	for _, id := range accountIds {
@@ -132,6 +143,9 @@ func parsePredicates(c *gin.Context) ([]predicate, bool) {
 		if k == "query_id" {
 			continue
 		}
+		if k == "limit" {
+			continue
+		}
 		if p, ok := parsePred(k, vals[0]); !ok {
 			return nil, false
 		} else {
@@ -148,7 +162,6 @@ func parsePred(key string, val string) (predicate, bool) {
 		return predicate{}, false
 	}
 	p := predicate{field: split[0], op: split[1], val: val}
-	fmt.Println(p)
 	if !validatePred(p) {
 		return predicate{}, false
 	}
