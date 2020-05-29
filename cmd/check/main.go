@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -36,6 +37,7 @@ func main() {
 				fmt.Println(r)
 			}
 		}
+		os.Exit(0)
 	}
 }
 
