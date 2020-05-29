@@ -35,6 +35,8 @@ func main() {
 			if resp.StatusCode != r.expectedStatus {
 				fmt.Printf("Unexpected status, want = %d, got = %d\n", r.expectedStatus, resp.StatusCode)
 				fmt.Println(r)
+				bytes, _ := ioutil.ReadAll(resp.Body)
+				fmt.Println(string(bytes))
 			}
 		}
 		os.Exit(0)
