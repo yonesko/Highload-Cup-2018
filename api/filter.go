@@ -163,7 +163,9 @@ func respBody(accountIds []int64, limit int, preds []predicate) []gin.H {
 			case "sex":
 				ans[i]["sex"] = account.Sex
 			case "phone":
-				ans[i]["phone"] = account.Phone
+				if account.Phone != "" {
+					ans[i]["phone"] = account.Phone
+				}
 			}
 		}
 	}

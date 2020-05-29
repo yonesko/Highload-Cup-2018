@@ -31,9 +31,8 @@ func Test(t *testing.T) {
 				log.Fatal(err)
 			}
 			actualRespBody := string(bytes)
-			if resp.StatusCode != r.expectedStatus || actualRespBody != r.expectedAnswerBody {
-				fmt.Println(request.URL)
-				require.Equal(t, r.expectedStatus, resp.StatusCode)
+			require.Equal(t, r.expectedStatus, resp.StatusCode)
+			if resp.StatusCode == 200 {
 				require.Equal(t, parseBody(r.expectedAnswerBody), parseBody(actualRespBody))
 			}
 		}
