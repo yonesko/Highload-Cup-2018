@@ -138,7 +138,7 @@ func AccountsFilter(c *gin.Context) {
 		accountIds = db.IntersectSorted(accountIds, preds[i].filter())
 	}
 
-	c.JSON(200, gin.H{"accounts": respBody(accountIds, limit)})
+	c.JSON(200, gin.H{"accounts": respBody(accountIds, limit, preds)})
 }
 
 func parseLimit(c *gin.Context) (int, bool) {
@@ -149,7 +149,7 @@ func parseLimit(c *gin.Context) (int, bool) {
 	return l, true
 }
 
-func respBody(accountIds []int64, limit int) []gin.H {
+func respBody(accountIds []int64, limit int, preds []predicate) []gin.H {
 	ans := make([]gin.H, limit)
 
 	sort.Slice(accountIds, func(i, j int) bool {
@@ -157,12 +157,14 @@ func respBody(accountIds []int64, limit int) []gin.H {
 	})
 	for i := 0; i < limit; i++ {
 		account := db.Accounts[accountIds[i]]
-		ans[i] = gin.H{
-			"id":      account.ID,
-			"email":   account.Email,
-			"country": account.Country,
-			"status":  account.Status,
-			"birth":   account.Birth,
+		ans[i] = gin.H{"id": account.ID, "email": account.Email}
+		for _, p := range preds {
+			switch p.field {
+			case "sex":
+				ans[i]["sex"] = account.Sex
+			case "phone":
+				ans[i]["phone"] = account.Phone
+			}
 		}
 	}
 
