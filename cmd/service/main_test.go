@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -33,10 +34,23 @@ func Test(t *testing.T) {
 			if resp.StatusCode != r.expectedStatus || actualRespBody != r.expectedAnswerBody {
 				fmt.Println(request.URL)
 				require.Equal(t, r.expectedStatus, resp.StatusCode)
-				require.Equal(t, r.expectedAnswerBody, actualRespBody)
+				require.Equal(t, parseBody(r.expectedAnswerBody), parseBody(actualRespBody))
 			}
 		}
 	}
+}
+
+func parseBody(s string) body {
+	var b body
+	err := json.Unmarshal(byte(s), &b)
+	if err != nil {
+		panic(err)
+	}
+	return b
+}
+
+type body struct {
+	Accounts map[string]string `json:"accounts"`
 }
 
 type row struct {
