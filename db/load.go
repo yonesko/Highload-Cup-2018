@@ -15,7 +15,7 @@ var Accounts []account.Account
 func LoadAccounts() {
 	reader, err := zip.OpenReader("/tmp/data/data.zip")
 	if err != nil {
-		log.Fatalf("can't load data: %s", err)
+		log.Fatalf("can't load accounts: %s", err)
 	}
 	defer reader.Close()
 	for _, f := range reader.File {
