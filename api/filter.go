@@ -1,6 +1,7 @@
 package api
 
 import (
+	"sort"
 	"strconv"
 	"strings"
 
@@ -127,18 +128,19 @@ func AccountsFilter(c *gin.Context) {
 		c.Status(400)
 		return
 	}
-	var accountIds []int64
-	for _, p := range preds {
-		result := p.filter()
-		if len(result) == 0 {
+	accountIds := preds[0].filter()
+	for i := 1; i < len(preds); i++ {
+		if len(accountIds) == 0 {
 			c.Status(200)
 			c.JSON(200, gin.H{"accounts": []gin.H{}})
 			return
 		}
-		accountIds = db.IntersectSorted(accountIds, result)
+		accountIds = db.IntersectSorted(accountIds, preds[i].filter())
 	}
+
 	c.JSON(200, gin.H{"accounts": respBody(accountIds, limit)})
 }
+
 func parseLimit(c *gin.Context) (int, bool) {
 	l, err := strconv.Atoi(c.Query("limit"))
 	if err != nil {
@@ -146,18 +148,22 @@ func parseLimit(c *gin.Context) (int, bool) {
 	}
 	return l, true
 }
-func respBody(accountIds []int64, limit int) []gin.H {
-	ans := make([]gin.H, len(accountIds))
 
-	for _, id := range accountIds {
-		account := db.Accounts[id]
-		ans = append(ans, gin.H{
+func respBody(accountIds []int64, limit int) []gin.H {
+	ans := make([]gin.H, limit)
+
+	sort.Slice(accountIds, func(i, j int) bool {
+		return accountIds[i] > accountIds[j]
+	})
+	for i := 0; i < limit; i++ {
+		account := db.Accounts[accountIds[i]]
+		ans[i] = gin.H{
+			"id":      account.ID,
 			"email":   account.Email,
 			"country": account.Country,
-			"id":      account.ID,
 			"status":  account.Status,
 			"birth":   account.Birth,
-		})
+		}
 	}
 
 	return ans
