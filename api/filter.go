@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/yonesko/Highload-Cup-2018/account"
 	"github.com/yonesko/Highload-Cup-2018/db"
 	"github.com/yonesko/Highload-Cup-2018/slice"
 )
@@ -113,10 +114,26 @@ func (p predicate) filter() []int64 {
 		case "null":
 			var ans []int64
 			for _, a := range db.Accounts {
-				if p.val == "1" && a.Phone == "" {
+				if (p.val == "1" && a.Phone == "") || (p.val == "0" && a.Phone != "") {
 					ans = append(ans, a.ID)
 				}
-				if p.val == "0" && a.Phone != "" {
+			}
+			return ans
+		}
+	case "country":
+		switch p.op {
+		case "eq":
+			var ans []int64
+			for _, a := range db.Accounts {
+				if a.Country == p.val {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
+		case "null":
+			var ans []int64
+			for _, a := range db.Accounts {
+				if (p.val == "1" && a.Country == "") || (p.val == "0" && a.Country != "") {
 					ans = append(ans, a.ID)
 				}
 			}
@@ -180,15 +197,45 @@ func respBody(accountIds []int64, limit int, preds []predicate) []gin.H {
 		return accountIds[i] > accountIds[j]
 	})
 	for i := 0; i < min(limit, len(accountIds)); i++ {
-		account := db.Accounts[accountIds[i]]
-		ans[i] = gin.H{"id": account.ID, "email": account.Email}
+		acc := db.Accounts[accountIds[i]]
+		ans[i] = gin.H{"id": acc.ID, "email": acc.Email}
 		for _, p := range preds {
 			switch p.field {
-			case "sex":
-				ans[i]["sex"] = account.Sex
 			case "phone":
-				if account.Phone != "" {
-					ans[i]["phone"] = account.Phone
+				if acc.Phone != "" {
+					ans[i]["phone"] = acc.Phone
+				}
+			case "country":
+				if acc.Country != "" {
+					ans[i]["country"] = acc.Country
+				}
+			case "birth":
+				if acc.Birth != 0 {
+					ans[i]["birth"] = acc.Birth
+				}
+			case "premium":
+				if acc.Premium != (account.Premium{}) {
+					ans[i]["premium"] = acc.Premium
+				}
+			case "sex":
+				if acc.Sex != "" {
+					ans[i]["sex"] = acc.Sex
+				}
+			case "status":
+				if acc.Status != "" {
+					ans[i]["status"] = acc.Status
+				}
+			case "sname":
+				if acc.S != "" {
+					ans[i]["sname"] = acc.Sname
+				}
+			case "city":
+				if acc.City != "" {
+					ans[i]["city"] = acc.City
+				}
+			case "fname":
+				if acc.Fname != "" {
+					ans[i]["fname"] = acc.Fname
 				}
 			}
 		}

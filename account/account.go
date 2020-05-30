@@ -12,6 +12,7 @@ type Like struct {
 type Account struct {
 	ID        int64    `json:"id"`
 	Fname     string   `json:"fname"`
+	Sname     string   `json:"Sname"`
 	Email     string   `json:"email"`
 	Interests []string `json:"interests"`
 	Status    string   `json:"status"`
