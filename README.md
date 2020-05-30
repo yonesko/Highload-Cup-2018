@@ -1,0 +1,1 @@
+https://highloadcup.ru/ru/round/6/
