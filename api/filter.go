@@ -15,7 +15,7 @@ import (
 
 type filterField struct {
 	name        string
-	ops         []string
+	Ops         []string
 	selectivity int
 }
 
@@ -25,62 +25,62 @@ func init() {
 	var filterFields = []filterField{
 		{
 			name:        "sex",
-			ops:         []string{"eq"},
+			Ops:         []string{"eq"},
 			selectivity: 100,
 		},
 		{
 			name:        "email",
-			ops:         []string{"domain", "lt", "gt"},
+			Ops:         []string{"domain", "lt", "gt"},
 			selectivity: 0,
 		},
 		{
 			name:        "status",
-			ops:         []string{"eq", "neq"},
+			Ops:         []string{"eq", "neq"},
 			selectivity: 90,
 		},
 		{
 			name:        "fname",
-			ops:         []string{"eq", "any", "null"},
+			Ops:         []string{"eq", "any", "null"},
 			selectivity: 0,
 		},
 		{
 			name:        "sname",
-			ops:         []string{"eq", "starts", "null"},
+			Ops:         []string{"eq", "starts", "null"},
 			selectivity: 0,
 		},
 		{
 			name:        "phone",
-			ops:         []string{"code", "null"},
+			Ops:         []string{"code", "null"},
 			selectivity: 0,
 		},
 		{
 			name:        "country",
-			ops:         []string{"eq", "null"},
+			Ops:         []string{"eq", "null"},
 			selectivity: 80,
 		},
 		{
 			name:        "city",
-			ops:         []string{"eq", "any", "null"},
+			Ops:         []string{"eq", "any", "null"},
 			selectivity: 70,
 		},
 		{
 			name:        "birth",
-			ops:         []string{"lt", "gt", "year"},
+			Ops:         []string{"lt", "gt", "year"},
 			selectivity: 0,
 		},
 		{
 			name:        "interests",
-			ops:         []string{"contains", "any"},
+			Ops:         []string{"contains", "any"},
 			selectivity: 0,
 		},
 		{
 			name:        "likes",
-			ops:         []string{"eq", "contains"},
+			Ops:         []string{"eq", "contains"},
 			selectivity: 0,
 		},
 		{
 			name:        "premium",
-			ops:         []string{"now", "null"},
+			Ops:         []string{"now", "null"},
 			selectivity: 0,
 		},
 	}
@@ -278,7 +278,7 @@ func parsePred(key string, val string) (predicate, bool) {
 	return p, true
 }
 func validatePred(p predicate) bool {
-	if ff, ok := filterFieldsMap[p.field]; ok && slice.StringSliceContains(ff.ops, p.op) {
+	if ff, ok := filterFieldsMap[p.field]; ok && slice.StringSliceContains(ff.Ops, p.op) {
 		return true
 	}
 	return false
