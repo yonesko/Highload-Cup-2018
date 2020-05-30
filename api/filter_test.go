@@ -36,14 +36,23 @@ switch p.op {
 	{{range $ff.Ops -}}
 		case "{{.}}":
 			{{if eq . "null" -}}
-				var ans []int64
+			var ans []int64
 			for _, a := range db.Accounts {
 				if (p.val == "1" && a.{{UpFirst $key}} == "") || (p.val == "0" && a.{{UpFirst $key}} != "") {
 					ans = append(ans, a.ID)
 				}
 			}
 			return ans
-			{{- end}}
+			{{- end -}}
+			{{if eq . "eq" -}}
+			var ans []int64
+			for _, a := range db.Accounts {
+				if a.{{UpFirst $key}} == p.val {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
+			{{end}}
 	{{- end}}
 }
 {{- end}}

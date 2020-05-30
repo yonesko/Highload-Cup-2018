@@ -75,7 +75,7 @@ func init() {
 		},
 		{
 			name:        "likes",
-			Ops:         []string{"eq", "contains"},
+			Ops:         []string{"contains"},
 			selectivity: 0,
 		},
 		{
@@ -98,27 +98,36 @@ type predicate struct {
 
 func (p predicate) filter() []int64 {
 	switch p.field {
-	case "sex":
+	case "birth":
+		switch p.op {
+		case "lt":
+
+		case "gt":
+
+		case "year":
+
+		}
+	case "city":
 		switch p.op {
 		case "eq":
 			var ans []int64
 			for _, a := range db.Accounts {
-				if a.Sex == p.val {
+				if a.City == p.val {
 					ans = append(ans, a.ID)
 				}
 			}
 			return ans
-		}
-	case "phone":
-		switch p.op {
+		case "any":
+
 		case "null":
 			var ans []int64
 			for _, a := range db.Accounts {
-				if (p.val == "1" && a.Phone == "") || (p.val == "0" && a.Phone != "") {
+				if (p.val == "1" && a.City == "") || (p.val == "0" && a.City != "") {
 					ans = append(ans, a.ID)
 				}
 			}
 			return ans
+
 		}
 	case "country":
 		switch p.op {
@@ -138,32 +147,10 @@ func (p predicate) filter() []int64 {
 				}
 			}
 			return ans
-		}
-	case "birth":
-		switch p.op {
-
-		case "lt":
-
-		case "gt":
-
-		case "year":
 
 		}
-
-	case "city":
-		switch p.op {
-
-		case "eq":
-
-		case "any":
-
-		case "null":
-
-		}
-
 	case "email":
 		switch p.op {
-
 		case "domain":
 
 		case "lt":
@@ -171,12 +158,16 @@ func (p predicate) filter() []int64 {
 		case "gt":
 
 		}
-
 	case "fname":
 		switch p.op {
-
 		case "eq":
-
+			var ans []int64
+			for _, a := range db.Accounts {
+				if a.Fname == p.val {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
 		case "any":
 
 		case "null":
@@ -187,51 +178,93 @@ func (p predicate) filter() []int64 {
 				}
 			}
 			return ans
-		}
 
+		}
 	case "interests":
 		switch p.op {
-
 		case "contains":
 
 		case "any":
 
 		}
-
 	case "likes":
 		switch p.op {
-
-		case "eq":
-
 		case "contains":
 
 		}
+	case "phone":
+		switch p.op {
+		case "code":
 
+		case "null":
+			var ans []int64
+			for _, a := range db.Accounts {
+				if (p.val == "1" && a.Phone == "") || (p.val == "0" && a.Phone != "") {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
+
+		}
 	case "premium":
 		switch p.op {
-
 		case "now":
 
 		case "null":
+			var ans []int64
+			for _, a := range db.Accounts {
+				if (p.val == "1" && a.Premium == account.Premium{}) || (p.val == "0" && a.Premium != account.Premium{}) {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
 
 		}
+	case "sex":
+		switch p.op {
+		case "eq":
+			var ans []int64
+			for _, a := range db.Accounts {
+				if a.Sex == p.val {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
 
+		}
 	case "sname":
 		switch p.op {
-
 		case "eq":
-
+			var ans []int64
+			for _, a := range db.Accounts {
+				if a.Sname == p.val {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
 		case "starts":
 
 		case "null":
+			var ans []int64
+			for _, a := range db.Accounts {
+				if (p.val == "1" && a.Sname == "") || (p.val == "0" && a.Sname != "") {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
 
 		}
-
 	case "status":
 		switch p.op {
-
 		case "eq":
 
+			var ans []int64
+			for _, a := range db.Accounts {
+				if a.Status == p.val {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
 		case "neq":
 
 		}
