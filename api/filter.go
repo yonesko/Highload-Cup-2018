@@ -226,7 +226,7 @@ func respBody(accountIds []int64, limit int, preds []predicate) []gin.H {
 					ans[i]["status"] = acc.Status
 				}
 			case "sname":
-				if acc.S != "" {
+				if acc.Sname != "" {
 					ans[i]["sname"] = acc.Sname
 				}
 			case "city":
