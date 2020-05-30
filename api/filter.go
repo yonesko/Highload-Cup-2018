@@ -101,11 +101,37 @@ func (p predicate) filter() []int64 {
 	case "birth":
 		switch p.op {
 		case "lt":
-
+			var ans []int64
+			dt, err := strconv.Atoi(p.val)
+			if err != nil {
+				panic(err)
+			}
+			for _, a := range db.Accounts {
+				if a.Birth < int64(dt) {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
 		case "gt":
-
+			var ans []int64
+			dt, err := strconv.Atoi(p.val)
+			if err != nil {
+				panic(err)
+			}
+			for _, a := range db.Accounts {
+				if a.Birth > int64(dt) {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
 		case "year":
-
+			var ans []int64
+			for _, a := range db.Accounts {
+				if a.City == p.val {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
 		}
 	case "city":
 		switch p.op {
@@ -257,7 +283,6 @@ func (p predicate) filter() []int64 {
 	case "status":
 		switch p.op {
 		case "eq":
-
 			var ans []int64
 			for _, a := range db.Accounts {
 				if a.Status == p.val {
@@ -407,8 +432,19 @@ func parsePred(key string, val string) (predicate, bool) {
 	return p, true
 }
 func validatePred(p predicate) bool {
-	if ff, ok := filterFieldsMap[p.field]; ok && slice.StringSliceContains(ff.Ops, p.op) {
+	if ff, ok := filterFieldsMap[p.field]; ok && slice.StringSliceContains(ff.Ops, p.op) && validateVal(p) {
 		return true
 	}
 	return false
+}
+
+func validateVal(p predicate) bool {
+	switch p.field {
+	case "birth":
+		_, err := strconv.Atoi(p.val)
+		if err != nil {
+			return false
+		}
+	}
+	return true
 }
