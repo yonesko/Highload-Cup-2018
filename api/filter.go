@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 	"strings"
@@ -125,6 +126,8 @@ func (p predicate) filter() []int64 {
 	return nil
 }
 
+var debug = true
+
 func AccountsFilter(c *gin.Context) {
 	limit, ok := parseLimit(c)
 	if !ok {
@@ -132,12 +135,18 @@ func AccountsFilter(c *gin.Context) {
 		return
 	}
 	preds, ok := parsePredicates(c)
+	if debug {
+		fmt.Printf("parsePredicates %v\n", preds)
+	}
 	if !ok {
 		c.Status(400)
 		return
 	}
 	accountIds := preds[0].filter()
 	for i := 1; i < len(preds); i++ {
+		if debug {
+			fmt.Printf("accountIds %d\n", len(accountIds))
+		}
 		if len(accountIds) == 0 {
 			c.Status(200)
 			c.JSON(200, gin.H{"accounts": []gin.H{}})
@@ -145,7 +154,9 @@ func AccountsFilter(c *gin.Context) {
 		}
 		accountIds = db.IntersectSorted(accountIds, preds[i].filter())
 	}
-
+	if debug {
+		fmt.Printf("accountIds %d\n", len(accountIds))
+	}
 	c.JSON(200, gin.H{"accounts": respBody(accountIds, limit, preds)})
 }
 

@@ -12,9 +12,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+
+	"github.com/yonesko/Highload-Cup-2018/db"
 )
 
 func Test(t *testing.T) {
+	db.LoadAccounts()
 	ammo := loadAmmo()
 	gin := buildGin()
 
