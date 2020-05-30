@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"strconv"
 	"strings"
 	"testing"
@@ -14,25 +15,17 @@ import (
 )
 
 func Test(t *testing.T) {
-	loadAmmo()
-	client := &http.Client{}
-	for _, r := range rows {
+	ammo := loadAmmo()
+	gin := buildGin()
+
+	for _, r := range ammo {
 		if strings.Contains(r.query, "/accounts/filter/") {
-			request, err := http.NewRequest(r.method, fmt.Sprintf("http://localhost:80%s", r.query), nil)
-			if err != nil {
-				log.Fatal(err)
-			}
-			resp, err := client.Do(request)
-			if err != nil {
-				log.Fatal(err)
-			}
-			bytes, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				log.Fatal(err)
-			}
-			actualRespBody := string(bytes)
-			require.Equal(t, r.expectedStatus, resp.StatusCode)
-			if resp.StatusCode == 200 {
+			w := httptest.NewRecorder()
+			req, _ := http.NewRequest("r.method", r.query, nil)
+			gin.ServeHTTP(w, req)
+			actualRespBody := w.Body.String()
+			require.Equal(t, r.expectedStatus, w.Code)
+			if w.Code == 200 {
 				require.Equal(t, parseBody(r.expectedAnswerBody), parseBody(actualRespBody))
 			}
 		}
@@ -60,15 +53,13 @@ type row struct {
 	expectedAnswerBody string
 }
 
-var rows []row
-
-func loadAmmo() {
+func loadAmmo() []row {
 	file, err := ioutil.ReadFile("/Users/gbdanichev/Downloads/test_accounts_240119/answers/phase_1_get.answ")
 	if err != nil {
 		log.Fatal(err)
 	}
 	fileStr := string(file)
-
+	var rows []row
 	for _, line := range strings.Split(fileStr, "\n") {
 		vals := strings.Split(line, "\t")
 		if len(vals) < 3 {
@@ -85,4 +76,5 @@ func loadAmmo() {
 		}
 		rows = append(rows, r)
 	}
+	return rows
 }

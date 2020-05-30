@@ -12,7 +12,12 @@ import (
 func main() {
 	db.LoadAccounts()
 
+	r := buildGin()
+	log.Fatal(r.Run(":80"))
+}
+
+func buildGin() *gin.Engine {
 	r := gin.Default()
 	r.GET("/accounts/filter/", api.AccountsFilter)
-	log.Fatal(r.Run(":80"))
+	return r
 }
