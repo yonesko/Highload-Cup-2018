@@ -139,6 +139,102 @@ func (p predicate) filter() []int64 {
 			}
 			return ans
 		}
+	case "birth":
+		switch p.op {
+
+		case "lt":
+
+		case "gt":
+
+		case "year":
+
+		}
+
+	case "city":
+		switch p.op {
+
+		case "eq":
+
+		case "any":
+
+		case "null":
+
+		}
+
+	case "email":
+		switch p.op {
+
+		case "domain":
+
+		case "lt":
+
+		case "gt":
+
+		}
+
+	case "fname":
+		switch p.op {
+
+		case "eq":
+
+		case "any":
+
+		case "null":
+			var ans []int64
+			for _, a := range db.Accounts {
+				if (p.val == "1" && a.Fname == "") || (p.val == "0" && a.Fname != "") {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
+		}
+
+	case "interests":
+		switch p.op {
+
+		case "contains":
+
+		case "any":
+
+		}
+
+	case "likes":
+		switch p.op {
+
+		case "eq":
+
+		case "contains":
+
+		}
+
+	case "premium":
+		switch p.op {
+
+		case "now":
+
+		case "null":
+
+		}
+
+	case "sname":
+		switch p.op {
+
+		case "eq":
+
+		case "starts":
+
+		case "null":
+
+		}
+
+	case "status":
+		switch p.op {
+
+		case "eq":
+
+		case "neq":
+
+		}
 	}
 	return nil
 }
