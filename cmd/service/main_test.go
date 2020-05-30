@@ -21,7 +21,7 @@ func Test(t *testing.T) {
 	for _, r := range ammo {
 		if strings.Contains(r.query, "/accounts/filter/") {
 			w := httptest.NewRecorder()
-			req, _ := http.NewRequest("r.method", r.query, nil)
+			req, _ := http.NewRequest(r.method, r.query, nil)
 			gin.ServeHTTP(w, req)
 			actualRespBody := w.Body.String()
 			require.Equal(t, r.expectedStatus, w.Code)
