@@ -368,6 +368,10 @@ func AccountsFilter(c *gin.Context) {
 		c.Status(400)
 		return
 	}
+	if len(preds) == 0 {
+		c.JSON(200, gin.H{"accounts": respBody(funk.Keys(db.Accounts).([]int64), limit, preds)})
+		return
+	}
 	accountIds := preds[0].filter()
 	for i := 1; i < len(preds); i++ {
 		if debug {

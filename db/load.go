@@ -40,7 +40,6 @@ func LoadAccounts() {
 		}
 	}
 	fmt.Printf("Load completed, len = %d\n", len(Accounts))
-	//fmt.Printf("%#v", Accounts[0])
 }
 
 func IntersectSorted(a []int64, b []int64) []int64 {
