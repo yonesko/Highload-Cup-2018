@@ -3,11 +3,11 @@ package account
 import "strings"
 
 type Premium struct {
-	Start  int `json:"start"`
-	Finish int `json:"finish"`
+	Start  int64 `json:"start"`
+	Finish int64 `json:"finish"`
 }
 type Like struct {
-	Ts int   `json:"ts"`
+	Ts int64 `json:"ts"`
 	ID int64 `json:"id"`
 }
 
