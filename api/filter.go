@@ -388,7 +388,7 @@ func AccountsFilter(c *gin.Context) {
 			c.JSON(200, gin.H{"accounts": []gin.H{}})
 			return
 		}
-		accountIds = db.IntersectSorted(accountIds, preds[i].filter())
+		accountIds = funk.JoinInt64(accountIds, preds[i].filter(), funk.InnerJoinInt64)
 	}
 	if debug {
 		fmt.Printf("filtered by %v got %d\n", preds[len(preds)-1], len(accountIds))
