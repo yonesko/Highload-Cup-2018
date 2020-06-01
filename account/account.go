@@ -1,12 +1,14 @@
 package account
 
+import "strings"
+
 type Premium struct {
 	Start  int `json:"start"`
 	Finish int `json:"finish"`
 }
 type Like struct {
-	Ts int `json:"ts"`
-	ID int `json:"id"`
+	Ts int   `json:"ts"`
+	ID int64 `json:"id"`
 }
 
 type Account struct {
@@ -24,4 +26,20 @@ type Account struct {
 	City      string   `json:"city"`
 	Country   string   `json:"country"`
 	Joined    int64    `json:"joined"`
+}
+
+func (a *Account) EmailDomain() string {
+	if a.Email == "" {
+		return ""
+	}
+	return strings.Split(a.Email, "@")[1]
+}
+func (a *Account) LikesIds() []int64 {
+	var ans []int64
+
+	for _, l := range a.Likes {
+		ans = append(ans, l.ID)
+	}
+
+	return ans
 }
