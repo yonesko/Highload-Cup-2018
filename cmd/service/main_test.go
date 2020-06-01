@@ -23,14 +23,16 @@ func Test(t *testing.T) {
 
 	for _, r := range ammo {
 		if strings.Contains(r.query, "/accounts/filter/") && !ignore(r.query) {
-			w := httptest.NewRecorder()
-			req, _ := http.NewRequest(r.method, r.query, nil)
-			gin.ServeHTTP(w, req)
-			actualRespBody := w.Body.String()
-			require.Equal(t, r.expectedStatus, w.Code)
-			if w.Code == 200 {
-				require.Equal(t, parseBody(r.expectedAnswerBody), parseBody(actualRespBody))
-			}
+			t.Run(r.query, func(t *testing.T) {
+				w := httptest.NewRecorder()
+				req, _ := http.NewRequest(r.method, r.query, nil)
+				gin.ServeHTTP(w, req)
+				actualRespBody := w.Body.String()
+				require.Equal(t, r.expectedStatus, w.Code)
+				if w.Code == 200 {
+					require.Equal(t, parseBody(r.expectedAnswerBody), parseBody(actualRespBody))
+				}
+			})
 		}
 	}
 }
