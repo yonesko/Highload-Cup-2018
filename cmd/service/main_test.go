@@ -9,10 +9,9 @@ import (
 	"net/http/httptest"
 	"strconv"
 	"strings"
-	"sync"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/yonesko/Highload-Cup-2018/db"
 )
@@ -21,25 +20,22 @@ func Test(t *testing.T) {
 	db.LoadAccounts()
 	ammo := loadAmmo()
 	gin := buildGin()
-	wg := sync.WaitGroup{}
 	for _, r := range ammo {
 		if strings.Contains(r.query, "/accounts/filter/") && !ignore(r.query) {
-			wg.Add(1)
-			t.Run(r.query, func(t *testing.T) {
-				defer wg.Done()
-				//t.Parallel()
+			rrun := r
+			t.Run(rrun.query, func(t *testing.T) {
+				t.Parallel()
 				w := httptest.NewRecorder()
-				req, _ := http.NewRequest(r.method, r.query, nil)
+				req, _ := http.NewRequest(rrun.method, rrun.query, nil)
 				gin.ServeHTTP(w, req)
 				actualRespBody := w.Body.String()
-				require.Equal(t, r.expectedStatus, w.Code)
+				assert.Equal(t, rrun.expectedStatus, w.Code)
 				if w.Code == 200 {
-					require.Equal(t, parseBody(r.expectedAnswerBody), parseBody(actualRespBody))
+					assert.Equal(t, parseBody(rrun.expectedAnswerBody), parseBody(actualRespBody))
 				}
 			})
 		}
 	}
-	//wg.Wait()
 }
 
 func ignore(query string) bool {
