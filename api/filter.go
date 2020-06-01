@@ -273,13 +273,15 @@ func (p predicate) filter() []int64 {
 	case "premium":
 		switch p.op {
 		case "now":
-			var ans []int64
-			for _, a := range db.Accounts {
-				if a.Premium.Start >= time.Now().Unix() && a.Premium.Finish <= time.Now().Unix() {
-					ans = append(ans, a.ID)
+			if p.val.(bool) {
+				var ans []int64
+				for _, a := range db.Accounts {
+					if a.Premium.Start >= time.Now().Unix() && a.Premium.Finish <= time.Now().Unix() {
+						ans = append(ans, a.ID)
+					}
 				}
+				return ans
 			}
-			return ans
 		case "null":
 			var ans []int64
 			for _, a := range db.Accounts {
