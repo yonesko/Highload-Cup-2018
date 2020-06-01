@@ -121,7 +121,7 @@ func (p predicate) filter() []int64 {
 		case "year":
 			var ans []int64
 			for _, a := range db.Accounts {
-				if time.Unix(a.Birth, 0).Year() == p.val.(int) {
+				if time.Unix(a.Birth, 0).UTC().Year() == p.val.(int) {
 					ans = append(ans, a.ID)
 				}
 			}
