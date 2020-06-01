@@ -269,7 +269,6 @@ func (p predicate) filter() []int64 {
 				}
 			}
 			return ans
-
 		}
 	case "premium":
 		switch p.op {
@@ -283,7 +282,6 @@ func (p predicate) filter() []int64 {
 				}
 			}
 			return ans
-
 		}
 	case "sex":
 		switch p.op {
@@ -295,7 +293,6 @@ func (p predicate) filter() []int64 {
 				}
 			}
 			return ans
-
 		}
 	case "sname":
 		switch p.op {
@@ -308,7 +305,13 @@ func (p predicate) filter() []int64 {
 			}
 			return ans
 		case "starts":
-
+			var ans []int64
+			for _, a := range db.Accounts {
+				if strings.HasPrefix(a.Sname, p.val.(string)) {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
 		case "null":
 			var ans []int64
 			for _, a := range db.Accounts {
@@ -317,7 +320,6 @@ func (p predicate) filter() []int64 {
 				}
 			}
 			return ans
-
 		}
 	case "status":
 		switch p.op {
@@ -509,7 +511,7 @@ func parsePredVal(p predicate) (interface{}, bool) {
 			}
 			return dt, true
 		case "year":
-			y, err := strconv.ParseInt(p.val.(string), 10, 64)
+			y, err := strconv.Atoi(p.val.(string))
 			if err != nil {
 				return nil, false
 			}
