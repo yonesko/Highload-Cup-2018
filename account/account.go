@@ -34,6 +34,14 @@ func (a *Account) EmailDomain() string {
 	}
 	return strings.Split(a.Email, "@")[1]
 }
+func (a *Account) PhoneCode() string {
+	if a.Phone == "" {
+		return ""
+	}
+	l := strings.IndexByte(a.Phone, '(')
+	r := strings.IndexByte(a.Phone, ')')
+	return a.Phone[l+1 : r]
+}
 func (a *Account) LikesIds() []int64 {
 	var ans []int64
 

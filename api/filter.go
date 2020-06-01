@@ -260,7 +260,13 @@ func (p predicate) filter() []int64 {
 	case "phone":
 		switch p.op {
 		case "code":
-
+			var ans []int64
+			for _, a := range db.Accounts {
+				if a.PhoneCode() == p.val {
+					ans = append(ans, a.ID)
+				}
+			}
+			return ans
 		case "null":
 			var ans []int64
 			for _, a := range db.Accounts {
