@@ -358,7 +358,7 @@ func (p predicate) filter() []int64 {
 	return nil
 }
 
-var debug = true
+var debug = false
 
 func AccountsFilter(c *gin.Context) {
 	limit, ok := parseLimit(c)
