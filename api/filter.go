@@ -121,7 +121,7 @@ func (p predicate) filter() []int64 {
 		case "year":
 			var ans []int64
 			for _, a := range db.Accounts {
-				if time.Unix(a.Birth, 0).Year() == time.Unix(p.val.(int64), 0).Year() {
+				if time.Unix(a.Birth, 0).Year() == p.val.(int) {
 					ans = append(ans, a.ID)
 				}
 			}
@@ -502,12 +502,18 @@ func parsePredVal(p predicate) (interface{}, bool) {
 	switch p.field {
 	case "birth":
 		switch p.op {
-		case "year", "gt", "lt":
+		case "gt", "lt":
 			dt, err := strconv.ParseInt(p.val.(string), 10, 64)
 			if err != nil {
 				return nil, false
 			}
 			return dt, true
+		case "year":
+			y, err := strconv.ParseInt(p.val.(string), 10, 64)
+			if err != nil {
+				return nil, false
+			}
+			return y, true
 		}
 	case "city":
 		switch p.op {
