@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -20,10 +21,13 @@ func Test(t *testing.T) {
 	db.LoadAccounts()
 	ammo := loadAmmo()
 	gin := buildGin()
-
+	wg := sync.WaitGroup{}
 	for _, r := range ammo {
 		if strings.Contains(r.query, "/accounts/filter/") && !ignore(r.query) {
+			wg.Add(1)
 			t.Run(r.query, func(t *testing.T) {
+				defer wg.Done()
+				//t.Parallel()
 				w := httptest.NewRecorder()
 				req, _ := http.NewRequest(r.method, r.query, nil)
 				gin.ServeHTTP(w, req)
@@ -35,6 +39,7 @@ func Test(t *testing.T) {
 			})
 		}
 	}
+	//wg.Wait()
 }
 
 func ignore(query string) bool {
