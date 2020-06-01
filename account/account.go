@@ -1,6 +1,9 @@
 package account
 
-import "strings"
+import (
+	"strings"
+	"time"
+)
 
 type Premium struct {
 	Start  int64 `json:"start"`
@@ -33,6 +36,9 @@ func (a *Account) EmailDomain() string {
 		return ""
 	}
 	return strings.Split(a.Email, "@")[1]
+}
+func (a *Account) UTCBirthYear() int {
+	return time.Unix(a.Birth, 0).UTC().Year()
 }
 func (a *Account) PhoneCode() string {
 	if a.Phone == "" {
