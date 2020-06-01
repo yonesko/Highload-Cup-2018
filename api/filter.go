@@ -194,7 +194,7 @@ func (p predicate) filter() []int64 {
 		case "gt":
 			var ans []int64
 			for _, a := range db.Accounts {
-				if a.Email < p.val.(string) {
+				if a.Email > p.val.(string) {
 					ans = append(ans, a.ID)
 				}
 			}
