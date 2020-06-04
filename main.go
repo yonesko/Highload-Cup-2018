@@ -11,7 +11,7 @@ import (
 
 func main() {
 	db.LoadAccounts()
-
+	gin.SetMode(gin.ReleaseMode)
 	r := buildGin()
 	log.Fatal(r.Run(":80"))
 }
