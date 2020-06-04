@@ -17,6 +17,7 @@ func LoadAccounts() {
 	if err != nil {
 		log.Fatalf("can't load accounts: %s", err)
 	}
+
 	defer reader.Close()
 	for _, f := range reader.File {
 		rc, err := f.Open()
