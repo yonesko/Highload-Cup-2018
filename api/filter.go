@@ -282,7 +282,7 @@ func (p predicate) filter() []int64 {
 			if p.val.(bool) {
 				var ans []int64
 				for _, a := range db.Accounts {
-					if a.Premium.Start >= time.Now().Unix() && a.Premium.Finish <= time.Now().Unix() {
+					if a.Premium.Start <= time.Now().Unix() && a.Premium.Finish >= time.Now().Unix() {
 						ans = append(ans, a.ID)
 					}
 				}
